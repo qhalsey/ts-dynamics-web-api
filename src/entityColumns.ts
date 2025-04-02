@@ -54,7 +54,7 @@ export async function fetchEntityAttributes(
  * 2) Transform a raw attribute object into a simplified object
  *    containing only the fields we care about (with new property names).
  */
-function transformAttribute(attribute: any): Record<string, any> {
+export function transformAttribute(attribute: any): Record<string, any> {
   // Adjust the property order/logic as you wish
   return {
     Name: attribute.SchemaName || "",

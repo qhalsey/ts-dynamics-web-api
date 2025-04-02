@@ -5,6 +5,7 @@ dotenv.config();
 
 import axios from "axios";
 import { processEntityColumns } from "./entityColumns";
+import { processEntityAll } from "./processEntity";
 
 async function getAccessToken() {
   try {
@@ -53,6 +54,8 @@ async function getAccessToken() {
     await processEntityColumns(accessToken, "account", orgUrl);
 
     console.log("Done processing account columns!");
+
+    await processEntityAll(accessToken, "account");
 
     // Later, you could do "contacts", etc.
     // await processEntityColumns(accessToken, "contact", orgUrl);

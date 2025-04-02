@@ -2,3 +2,5 @@ node_modules/
 dist/
 .env
 *.log
+prompts.txt
+.gitignore

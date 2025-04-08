@@ -6,7 +6,13 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * 1) Fetch all attributes for a given entity with paging
+ * Fetches all attributes for a given entity from Microsoft Dynamics 365, handling paging.
+ *
+ * @param {string} entityName - The name of the entity to fetch attributes for.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<any[]>} A promise that resolves to an array of attributes.
+ * @throws Will throw an error if the request fails.
  */
 export async function fetchEntityAttributes(
   entityName: string,
@@ -51,8 +57,10 @@ export async function fetchEntityAttributes(
 }
 
 /**
- * 2) Transform a raw attribute object into a simplified object
- *    containing only the fields we care about (with new property names).
+ * Transforms a raw attribute object into a simplified object containing only the fields of interest.
+ *
+ * @param {any} attribute - The raw attribute object to transform.
+ * @returns {Record<string, any>} A transformed object with key-value pairs for the attribute.
  */
 export function transformAttribute(attribute: any): Record<string, any> {
   // Adjust the property order/logic as you wish
@@ -73,7 +81,12 @@ export function transformAttribute(attribute: any): Record<string, any> {
 }
 
 /**
- * 3) Write to Excel using exceljs
+ * Writes the transformed attributes to an Excel file using ExcelJS.
+ *
+ * @param {Record<string, any>[]} attributes - The array of transformed attributes to write.
+ * @param {string} entityName - The name of the entity, used for naming the Excel file.
+ * @returns {Promise<void>} A promise that resolves when the Excel file has been written.
+ * @throws Will throw an error if writing the file fails.
  */
 async function writeAttributesToExcel(
   attributes: Record<string, any>[],
@@ -111,7 +124,13 @@ async function writeAttributesToExcel(
 }
 
 /**
- * Orchestrator function to do it all for any entity (fetch + transform + excel).
+ * Orchestrates the process of fetching, transforming, and exporting entity attributes to Excel.
+ *
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} entityName - The name of the entity to process.
+ * @param {string} orgUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<void>} A promise that resolves when the process is complete.
+ * @throws Will throw an error if any step of the process fails.
  */
 export async function processEntityColumns(
   accessToken: string,

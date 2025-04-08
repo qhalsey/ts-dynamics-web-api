@@ -6,7 +6,13 @@ import * as ExcelJS from "exceljs";
 import { BusinessRule } from "./types/crm"; // Assuming you have a types file for your interfaces
 
 /**
- * Fetch business rules (category=2) for a given entity
+ * Fetches business rules (category=2) for a given entity from Microsoft Dynamics 365.
+ *
+ * @param {string} entityName - The name of the entity to fetch business rules for.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<BusinessRule[]>} A promise that resolves to an array of business rules.
+ * @throws Will throw an error if the request fails.
  */
 export async function fetchEntityBusinessRules(
   entityName: string,
@@ -53,7 +59,10 @@ export async function fetchEntityBusinessRules(
 }
 
 /**
- * Transform rule to friendly Excel format
+ * Transforms a business rule object into a friendly format suitable for Excel export.
+ *
+ * @param {BusinessRule} rule - The business rule to transform.
+ * @returns {Record<string, any>} A transformed object with key-value pairs for Excel export.
  */
 export function transformBusinessRule(rule: BusinessRule): Record<string, any> {
   return {
@@ -71,7 +80,14 @@ export function transformBusinessRule(rule: BusinessRule): Record<string, any> {
 }
 
 /**
- * Adds a sheet for Business Rules to the workbook
+ * Adds a worksheet for business rules to the given Excel workbook.
+ *
+ * @param {ExcelJS.Workbook} workbook - The Excel workbook to add the worksheet to.
+ * @param {string} entityName - The name of the entity whose business rules are being added.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<void>} A promise that resolves when the worksheet has been added.
+ * @throws Will throw an error if fetching business rules fails.
  */
 export async function addBusinessRulesSheet(
   workbook: ExcelJS.Workbook,

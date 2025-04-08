@@ -4,7 +4,12 @@ import axios, { AxiosResponse } from "axios";
 import * as ExcelJS from "exceljs";
 
 /**
- * Reusable paging function: fetch all pages from a given URL
+ * Fetches all pages of data from a given URL, handling paging.
+ *
+ * @param {string} url - The initial URL to fetch data from.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @returns {Promise<any[]>} A promise that resolves to an array of all fetched records.
+ * @throws Will throw an error if the request fails.
  */
 async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
   let results: any[] = [];
@@ -31,7 +36,13 @@ async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
 }
 
 /**
- * Fetch all relationships (OneToMany, ManyToOne, ManyToMany) for a given entity
+ * Fetches all relationships (OneToMany, ManyToOne, ManyToMany) for a given entity from Microsoft Dynamics 365.
+ *
+ * @param {string} entityName - The logical name of the entity (e.g., "account", "contact").
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<any[]>} A promise that resolves to an array of relationship records.
+ * @throws Will throw an error if the request fails.
  */
 export async function fetchEntityRelationships(
   entityName: string,
@@ -56,8 +67,10 @@ export async function fetchEntityRelationships(
 }
 
 /**
- * Transform a raw relationship object into a simplified
- * record with just the fields we need, renamed appropriately.
+ * Transforms a raw relationship object into a simplified record with renamed fields.
+ *
+ * @param {any} rel - The raw relationship object to transform.
+ * @returns {Record<string, any>} A transformed object with key-value pairs for the relationship.
  */
 export function transformRelationship(rel: any): Record<string, any> {
   return {
@@ -91,6 +104,16 @@ export function transformRelationship(rel: any): Record<string, any> {
   };
 }
 
+/**
+ * Adds a worksheet for relationships to the given Excel workbook.
+ *
+ * @param {ExcelJS.Workbook} workbook - The Excel workbook to add the worksheet to.
+ * @param {string} entityName - The name of the entity whose relationships are being added.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<void>} A promise that resolves when the worksheet has been added.
+ * @throws Will throw an error if fetching relationships fails.
+ */
 export async function addRelationshipsSheet(
   workbook: ExcelJS.Workbook,
   entityName: string,

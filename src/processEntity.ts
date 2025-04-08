@@ -7,6 +7,14 @@ import { addFormsSheet } from "./entityForms";
 import { addViewsSheet } from "./entityViews";
 import { addBusinessRulesSheet } from "./entityBusinessRules";
 
+/**
+ * Orchestrates the process of fetching, transforming, and exporting all entity-related data (columns, relationships, forms, views, and business rules) to an Excel workbook.
+ *
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} entityName - The name of the entity to process.
+ * @returns {Promise<void>} A promise that resolves when the process is complete and the workbook is saved.
+ * @throws Will throw an error if any step of the process fails.
+ */
 export async function processEntityAll(
   accessToken: string,
   entityName: string

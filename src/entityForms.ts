@@ -4,7 +4,12 @@ import axios, { AxiosResponse } from "axios";
 import * as ExcelJS from "exceljs";
 
 /**
- * Reusable paging function: fetch all pages from a given URL
+ * Fetches all pages of data from a given URL, handling paging.
+ *
+ * @param {string} url - The initial URL to fetch data from.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @returns {Promise<any[]>} A promise that resolves to an array of all fetched records.
+ * @throws Will throw an error if the request fails.
  */
 async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
   let results: any[] = [];
@@ -31,11 +36,12 @@ async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
 }
 
 /**
- * Fetch all system forms for a given entity
- * @param entityName - The logical name of the entity (e.g., "account", "contact").
- * @param accessToken - The OAuth2 access token for authentication.
- * @param baseUrl - The base URL of the Dynamics 365 instance (e.g., "https://org0b26dba9.api.crm.dynamics.com/api/data/v9.1").
- * @return A promise that resolves to an array of form records.
+ * Fetches all system forms for a given entity from Microsoft Dynamics 365.
+ *
+ * @param {string} entityName - The logical name of the entity (e.g., "account", "contact").
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance (e.g., "https://org0b26dba9.api.crm.dynamics.com/api/data/v9.1").
+ * @returns {Promise<any[]>} A promise that resolves to an array of form records.
  * @throws Will throw an error if the request fails.
  */
 export async function fetchEntityForms(
@@ -70,8 +76,10 @@ export async function fetchEntityForms(
 }
 
 /**
- * Transform a raw form object into a simplified
- * record with just the fields we need, renamed appropriately.
+ * Transforms a raw form object into a simplified record with renamed fields.
+ *
+ * @param {any} form - The raw form object to transform.
+ * @returns {Record<string, any>} A transformed object with key-value pairs for the form.
  */
 export function transformForm(form: any): Record<string, any> {
   return {
@@ -87,6 +95,16 @@ export function transformForm(form: any): Record<string, any> {
   };
 }
 
+/**
+ * Adds a worksheet for forms to the given Excel workbook.
+ *
+ * @param {ExcelJS.Workbook} workbook - The Excel workbook to add the worksheet to.
+ * @param {string} entityName - The name of the entity whose forms are being added.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<void>} A promise that resolves when the worksheet has been added.
+ * @throws Will throw an error if fetching forms fails.
+ */
 export async function addFormsSheet(
   workbook: ExcelJS.Workbook,
   entityName: string,

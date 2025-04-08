@@ -4,7 +4,12 @@ import axios, { AxiosResponse } from "axios";
 import * as ExcelJS from "exceljs";
 
 /**
- * Fetch all paginated data
+ * Fetches all pages of data from a given URL, handling paging.
+ *
+ * @param {string} url - The initial URL to fetch data from.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @returns {Promise<any[]>} A promise that resolves to an array of all fetched records.
+ * @throws Will throw an error if the request fails.
  */
 async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
   let results: any[] = [];
@@ -23,7 +28,13 @@ async function fetchAllPages(url: string, accessToken: string): Promise<any[]> {
 }
 
 /**
- * Fetch system views (savedqueries) for an entity
+ * Fetches system views (savedqueries) for a given entity from Microsoft Dynamics 365.
+ *
+ * @param {string} entityName - The logical name of the entity (e.g., "account", "contact").
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<any[]>} A promise that resolves to an array of view records.
+ * @throws Will throw an error if the request fails.
  */
 export async function fetchEntityViews(
   entityName: string,
@@ -54,7 +65,10 @@ export async function fetchEntityViews(
 }
 
 /**
- * Transform a raw view object into simplified, portable structure
+ * Transforms a raw view object into a simplified record with renamed fields.
+ *
+ * @param {any} view - The raw view object to transform.
+ * @returns {Record<string, any>} A transformed object with key-value pairs for the view.
  */
 export function transformView(view: any): Record<string, any> {
   return {
@@ -71,7 +85,14 @@ export function transformView(view: any): Record<string, any> {
 }
 
 /**
- * Add a "Views" worksheet to Excel workbook
+ * Adds a worksheet for views to the given Excel workbook.
+ *
+ * @param {ExcelJS.Workbook} workbook - The Excel workbook to add the worksheet to.
+ * @param {string} entityName - The name of the entity whose views are being added.
+ * @param {string} accessToken - The OAuth2 access token for authentication.
+ * @param {string} baseUrl - The base URL of the Dynamics 365 instance.
+ * @returns {Promise<void>} A promise that resolves when the worksheet has been added.
+ * @throws Will throw an error if fetching views fails.
  */
 export async function addViewsSheet(
   workbook: ExcelJS.Workbook,

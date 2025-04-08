@@ -5,9 +5,12 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * Creates a workbook for a single entity, writing out multiple sheets if needed.
- * @param entityName Name of the entity (used for the output file).
- * @param sheetsData An array of sheets to create; each includes a sheetName and array of records.
+ * Creates an Excel workbook for a single entity, writing out multiple sheets if needed.
+ *
+ * @param {string} entityName - The name of the entity (used for the output file).
+ * @param {{ sheetName: string; records: any[] }[]} sheetsData - An array of sheets to create; each includes a sheet name and an array of records.
+ * @returns {Promise<void>} A promise that resolves when the workbook has been created and written to a file.
+ * @throws Will throw an error if writing the workbook fails.
  */
 export async function createWorkbookForEntity(
   entityName: string,
@@ -45,7 +48,7 @@ export async function createWorkbookForEntity(
   }
 
   // 4) Write the workbook to file
-  const outputPath = path.join(outputFolder, `${entityName}1.xlsx`);
+  const outputPath = path.join(outputFolder, `${entityName}.xlsx`);
 
   try {
     await workbook.xlsx.writeFile(outputPath);

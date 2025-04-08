@@ -105,7 +105,7 @@ async function writeAttributesToExcel(
   }
 
   // Write file (again, dynamically name it)
-  const outputPath = path.join(outputFolder, `${entityName}.xlsx`);
+  const outputPath = path.join(outputFolder, `${entityName}1.xlsx`);
   await workbook.xlsx.writeFile(outputPath);
   console.log(`File written: ${outputPath}`);
 }

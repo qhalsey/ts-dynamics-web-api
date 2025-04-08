@@ -64,7 +64,7 @@ export async function fetchEntityForms(
     const forms = await fetchAllPages(formsUrl, accessToken);
     return forms;
   } catch (error) {
-    console.error(`Error fetching forms for ${entityName}:`, error);
+    console.error(`Error fetching forms for ${entityName}:, error`);
     throw error;
   }
 }

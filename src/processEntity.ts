@@ -3,6 +3,7 @@
 import * as ExcelJS from "exceljs";
 import { fetchEntityAttributes, transformAttribute } from "./entityColumns";
 import { addRelationshipsSheet } from "./entityRelationships";
+import { addFormsSheet } from "./entityForms";
 
 export async function processEntityAll(
   accessToken: string,
@@ -39,6 +40,7 @@ export async function processEntityAll(
 
   // 3) Add the "Relationships" sheet
   await addRelationshipsSheet(workbook, entityName, accessToken, orgUrl);
+  await addFormsSheet(workbook, entityName, accessToken, orgUrl);
 
   // 4) Save the final workbook
   await workbook.xlsx.writeFile(`./outputs/${entityName}.xlsx`);

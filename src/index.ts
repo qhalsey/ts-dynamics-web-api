@@ -4,7 +4,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import axios from "axios";
-import { processEntityColumns } from "./entityColumns";
 import { processEntityAll } from "./processEntity";
 
 async function getAccessToken() {
@@ -47,13 +46,7 @@ async function getAccessToken() {
     const accessToken = await getAccessToken();
     console.log("Access token acquired.");
 
-    // The base URL for your D365 environment
-    const orgUrl = "https://org0b26dba9.crm.dynamics.com/api/data/v9.2";
-
-    // For now, let's just do "account"
-    await processEntityColumns(accessToken, "account", orgUrl);
-
-    console.log("Done processing account columns!");
+    const listOfEntities: string[] = ["account", "contact"];
 
     await processEntityAll(accessToken, "account");
 

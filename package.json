@@ -12,11 +12,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/node": "^22.14.0",
     "axios": "^1.8.4",
     "dotenv": "^16.4.7",
-    "exceljs": "^4.4.0",
+    "exceljs": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }

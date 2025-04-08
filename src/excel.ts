@@ -45,7 +45,7 @@ export async function createWorkbookForEntity(
   }
 
   // 4) Write the workbook to file
-  const outputPath = path.join(outputFolder, `${entityName}.xlsx`);
+  const outputPath = path.join(outputFolder, `${entityName}1.xlsx`);
 
   try {
     await workbook.xlsx.writeFile(outputPath);

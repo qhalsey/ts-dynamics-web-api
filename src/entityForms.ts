@@ -49,9 +49,6 @@ export async function fetchEntityForms(
   accessToken: string,
   baseUrl: string
 ): Promise<any[]> {
-  // Implement this function to get system forms for the entity
-  //GET https://your-org.crm.dynamics.com/api/data/v9.2/systemforms?$filter=objecttypecode eq 'account'
-  // The specific fields that we want
   const selectedFields = [
     "formjson",
     "formactivationstate",

@@ -46,13 +46,65 @@ async function getAccessToken() {
     const accessToken = await getAccessToken();
     console.log("Access token acquired.");
 
-    const listOfEntities: string[] = ["account", "contact"];
+    // const listOfEntities: string[] = ["account", "contact"];
 
-    await processEntityAll(accessToken, "account");
+    const listOfEntites: string[] = [
+      "account",
+      "bam_batch",
+      "bam_bpf_556396196ab5470b836c103f3dfd232a",
+      "bam_city",
+      "bam_consignmentbatch",
+      "bam_consignmentdetail",
+      "bam_field",
+      "bam_fieldproductstatus",
+      "bam_harvestrecord",
+      "bam_inventorytagcount",
+      "bam_inventorytransactionlog",
+      "bam_lot",
+      "bam_lotbagtag",
+      "bam_lottesting",
+      "bam_mlra",
+      "bam_mlra_product",
+      "bam_nationalplantlist",
+      "bam_orderbagtag",
+      "bam_pickingbatch",
+      "bam_plsrate",
+      "bam_processingrecord",
+      "bam_processtrigger",
+      "bam_productfeedback",
+      "bam_productheading",
+      "bam_projecttype",
+      "bam_purchaseorder",
+      "bam_purchaseorderdetail",
+      "bam_quoteconfirmation",
+      "bam_rebate",
+      "bam_state",
+      "bam_subfield",
+      "bam_term",
+      "bam_vendor",
+      "bam_vendorproduct",
+      "bam_yield",
+      "contact",
+      "contactleads",
+      "customeraddress",
+      "discount",
+      "discounttype",
+      "invoice",
+      "invoicedetail",
+      "opportunity",
+      "product",
+      "productassociation",
+      "productpricelevel",
+      "productsalesliterature",
+      "productsubstitute",
+    ];
 
-    // Later, you could do "contacts", etc.
-    // await processEntityColumns(accessToken, "contact", orgUrl);
-    // console.log("Done processing contact columns!");
+    // Loop through each entity and process it
+    for (const entity of listOfEntites) {
+      console.log(`Processing entity: ${entity}`);
+      await processEntityAll(accessToken, entity);
+      console.log(`Finished processing entity: ${entity}`);
+    }
   } catch (err) {
     console.error("Unhandled error:", err);
   }

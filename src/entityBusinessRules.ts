@@ -6,6 +6,13 @@ import * as ExcelJS from "exceljs";
 import { BusinessRule } from "./types/crm"; // Assuming you have a types file for your interfaces
 
 /**
+ * Changes to the Transform Function
+ * We need to check if the description of the business rule is "Click to add description"
+ * and if so, we need to set it to an empty string.
+ *"Component State": formComponentStates[view["componentstate"]] || "",
+ */
+
+/**
  * Fetches business rules (category=2) for a given entity from Microsoft Dynamics 365.
  *
  * @param {string} entityName - The name of the entity to fetch business rules for.
@@ -22,10 +29,11 @@ export async function fetchEntityBusinessRules(
   const filter = `category eq 2 and primaryentity eq '${entityName}'`;
   const selectFields = [
     "name",
-    "description",
-    "primaryentity",
-    "xaml",
-    "clientdata",
+    // "description",
+    // "primaryentity",
+    // "clientdata",
+    "category",
+    "type",
     "scope",
     "ismanaged",
     "iscustomizable/Value",
@@ -46,15 +54,15 @@ export async function fetchEntityBusinessRules(
 
   return (response.data.value || []).map((rule: any) => ({
     name: rule.name,
-    description: rule.description,
-    primaryentity: rule.primaryentity,
-    xaml: rule.xaml,
-    clientdata: rule.clientdata,
+    // primaryentity: rule.primaryentity,
+    // clientdata: rule.clientdata,
     scope: rule.scope,
     ismanaged: rule.ismanaged,
     iscustomizable: rule["iscustomizable/Value"] ?? false,
     statecode: rule.statecode,
     statuscode: rule.statuscode,
+    type: rule.type,
+    category: rule.category,
   }));
 }
 
@@ -65,17 +73,46 @@ export async function fetchEntityBusinessRules(
  * @returns {Record<string, any>} A transformed object with key-value pairs for Excel export.
  */
 export function transformBusinessRule(rule: BusinessRule): Record<string, any> {
+  const businessRuleType: Record<number, string> = {
+    0: "Business Flow",
+    1: "Task Flow",
+  };
+
+  const businessRuleCategory: Record<number, string> = {
+    0: "Workflow",
+    1: "Dialog",
+    2: "Business Rule",
+    3: "Action",
+    4: "Business Process Flow",
+    5: "Modern Flow",
+    6: "Desktop Flow",
+    7: "AI Flow",
+  };
+
+  const businessRuleScope: Record<number, string> = {
+    1: "User",
+    2: "Business Unit",
+    3: "Parent: Child Business Unit",
+    4: "Organization",
+  };
+
+  const businessRuleComponentState: Record<number, string> = {
+    0: "Published",
+    1: "Unpublished",
+    2: "Deleted",
+    3: "Deleted Unpublished",
+  };
+
   return {
     Name: rule.name,
-    Description: rule.description ?? "",
-    "Entity Name": rule.primaryentity,
-    Scope: rule.scope,
+    // "Entity Name": rule.primaryentity,
+    Scope: businessRuleScope[rule.scope] || "",
     "Is Managed": rule.ismanaged,
     "Is Customizable": rule.iscustomizable,
-    "State Code": rule.statecode,
+    "State Code": businessRuleComponentState[rule.statecode] || "",
     "Status Code": rule.statuscode,
-    "Business Logic (XAML)": rule.xaml ?? "",
-    "Client Script": rule.clientdata ?? "",
+    Category: businessRuleCategory[rule.category] || "",
+    Type: businessRuleType[rule.type] || "",
   };
 }
 

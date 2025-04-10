@@ -21,4 +21,6 @@ export interface BusinessRule {
   iscustomizable: boolean;
   statecode: number;
   statuscode: number;
+  type: number;
+  category: number;
 }

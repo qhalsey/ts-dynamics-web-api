@@ -79,16 +79,59 @@ export async function fetchEntityForms(
  * @returns {Record<string, any>} A transformed object with key-value pairs for the form.
  */
 export function transformForm(form: any): Record<string, any> {
+  const formActivationStates: Record<number, string> = {
+    0: "Inactive",
+    1: "Active",
+  };
+
+  const formComponentStates: Record<number, string> = {
+    0: "Published",
+    1: "Unpublished",
+    2: "Deleted",
+    3: "Deleted Unpublished",
+  };
+
+  const formPresentationStates: Record<number, string> = {
+    0: "ClassicForm",
+    1: "AirForm",
+    2: "ConvertedICForm",
+  };
+
+  const formTypes: Record<number, string> = {
+    0: "Dashboard",
+    1: "AppointmentBook",
+    2: "Main",
+    3: "MiniCampaignBO",
+    4: "Preview",
+    5: "Mobile - Express",
+    6: "Quick View Form",
+    7: "Quick Create",
+    8: "Dialog",
+    9: "Task Flow Form",
+    10: "InteractionCentricDashboard",
+    11: "Card",
+    12: "Main - Interactive Experience",
+    13: "Conceptual Dashboard",
+    100: "Other",
+    101: "MainBackup",
+    102: "AppointmentBookBackup",
+    103: "Power BI Dashboard",
+  };
+
   return {
-    JSON: form.formjson || "",
-    "Activation State": form.formactivationstate || "",
-    Type: form.type ?? "",
-    Description: form.description || "",
-    "Is Default": form.isdefault || false,
-    "Object Type Code": form.objecttypecode || "",
-    "Is Managed": form.ismanaged || false,
     Name: form.name || "",
-    "Is Customizable": form["iscustomizable/Value"] || false,
+    Entity: form.objecttypecode || "",
+    "Activation State":
+      formActivationStates[form.formactivationstate] || "Unknown",
+    "Component State": formComponentStates[form.componentstate] || "Unknown",
+    "Presentation State":
+      formPresentationStates[form.formpresentationstate] || "Unknown",
+    "Is Air Merged": form.isairmerged === 1 ? "Yes" : "No",
+    "Form Type": formTypes[form.type] || "Unknown",
+    Description: form.description || "",
+    "Is Default": form.isdefault ? "Yes" : "No",
+    "Is Managed": form.ismanaged ? "Yes" : "No",
+    "Is Customizable": form["iscustomizable/Value"] ? "Yes" : "No",
   };
 }
 

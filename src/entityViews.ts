@@ -44,10 +44,11 @@ export async function fetchEntityViews(
   const selectedFields = [
     "name",
     "description",
-    "returnedtypecode",
-    "fetchxml",
-    "layoutxml",
-    "layoutjson",
+    "componentstate",
+    // "returnedtypecode",
+    // "fetchxml",
+    // "layoutxml",
+    // "layoutjson",
     "isdefault",
     "ismanaged",
     "iscustomizable/Value",
@@ -71,16 +72,24 @@ export async function fetchEntityViews(
  * @returns {Record<string, any>} A transformed object with key-value pairs for the view.
  */
 export function transformView(view: any): Record<string, any> {
+  const formComponentStates: Record<number, string> = {
+    0: "Published",
+    1: "Unpublished",
+    2: "Deleted",
+    3: "Deleted Unpublished",
+  };
+
   return {
     Name: view.name || "",
     Description: view.description || "",
-    "Entity Name": view.returnedtypecode || "",
+    // "Entity Name": view.returnedtypecode || "",
+    "Component State": formComponentStates[view["componentstate"]] || "",
     "Is Default": view.isdefault || false,
     "Is Managed": view.ismanaged || false,
     "Is Customizable": view["iscustomizable/Value"] ?? false,
-    "Fetch XML": view.fetchxml || "",
-    "Layout XML": view.layoutxml || "",
-    "Layout JSON": view.layoutjson || "",
+    // "Fetch XML": view.fetchxml || "",
+    // "Layout XML": view.layoutxml || "",
+    // "Layout JSON": view.layoutjson || "",
   };
 }
 

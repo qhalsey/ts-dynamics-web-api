@@ -1,3 +1,5 @@
+// /types/crm.ts
+
 export interface EntityView {
   name: string;
   description?: string;
@@ -23,4 +25,28 @@ export interface BusinessRule {
   statuscode: number;
   type: number;
   category: number;
+}
+
+export interface Relationship {
+  "Schema Name": string;
+  "Security Types": string;
+  Managed: string;
+  Type: string;
+  "Attribute Ref.": string;
+  "Entity Ref.": string;
+  "Referencing Attribute": string;
+  "Referencing Entity": string;
+  Hierarchical: string;
+  Behavior: string;
+  Customizable: string;
+  "Menu Behavior": string;
+  "Menu Customization": string;
+  Assign: string;
+  Delete: string;
+  Archive: string;
+  Merge: string;
+  Reparent: string;
+  Share: string;
+  Unshare: string;
+  RollupView: string;
 }

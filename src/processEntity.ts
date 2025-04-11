@@ -2,28 +2,31 @@
 
 import * as ExcelJS from "exceljs";
 import { addColumnsSheet } from "./entityColumns";
-import { addRelationshipsSheet } from "./entityRelationships";
+import {
+  addRelationshipsSheet,
+  fetchEntityRelationships,
+  transformRelationship,
+} from "./entityRelationships";
 import { addFormsSheet } from "./entityForms";
 import { addViewsSheet } from "./entityViews";
 import { addBusinessRulesSheet } from "./entityBusinessRules";
+import {
+  generateRelationshipDiagram,
+  DiagramFilterOptions,
+} from "./generateRelationshipDiagram";
 
 /**
- * Orchestrates the process of fetching, transforming, and exporting all entity-related data (columns, relationships, forms, views, and business rules) to an Excel workbook.
+ * Orchestrates fetching, transforming, and exporting all entity-related data to an Excel workbook
+ * and generates a diagram for the entity's relationships.
  *
- * @param {string} accessToken - The OAuth2 access token for authentication.
- * @param {string} entityName - The name of the entity to process.
- * @returns {Promise<void>} A promise that resolves when the process is complete and the workbook is saved.
- * @throws Will throw an error if any step of the process fails.
+ * @param accessToken - OAuth2 access token.
+ * @param entityName - The logical name of the entity (e.g., "account").
  */
 export async function processEntityAll(
   accessToken: string,
   entityName: string
 ) {
-  //Create an in-memory workbook
   const workbook = new ExcelJS.Workbook();
-
-  //Add the Columns sheet
-  //    a) fetch columns
   const orgUrl = "https://org0b26dba9.crm.dynamics.com/api/data/v9.2";
 
   await addColumnsSheet(workbook, entityName, accessToken, orgUrl);
@@ -31,7 +34,37 @@ export async function processEntityAll(
   await addFormsSheet(workbook, entityName, accessToken, orgUrl);
   await addViewsSheet(workbook, entityName, accessToken, orgUrl);
   await addBusinessRulesSheet(workbook, entityName, accessToken, orgUrl);
-  // 4) Save the final workbook
-  await workbook.xlsx.writeFile(`./outputs/${entityName}.xlsx`);
-  console.log(`Wrote file: ./outputs/${entityName}.xlsx`);
+
+  // Write Excel output.
+  const excelPath = `./outputs/${entityName}.xlsx`;
+  await workbook.xlsx.writeFile(excelPath);
+  console.log(`Wrote file: ${excelPath}`);
+
+  // Generate the diagram for relationships.
+  const rawRelationships = await fetchEntityRelationships(
+    entityName,
+    accessToken,
+    orgUrl
+  );
+  const transformedRelationships = rawRelationships.map(transformRelationship);
+  const filterOptions: DiagramFilterOptions = {
+    // Uncomment and edit the filters if needed:
+    // allowedTypes: ["OneToManyRelationship", "ManyToOneRelationship"],
+    // allowedEntities: [entityName.toLowerCase()],
+  };
+
+  const diagramFileName = `${entityName}.png`;
+  await generateRelationshipDiagram(
+    transformedRelationships,
+    diagramFileName,
+    filterOptions
+  );
+  console.log(`Diagram created at ./diagrams/${diagramFileName}`);
+}
+
+// Run the process if this file is executed directly.
+if (require.main === module) {
+  const accessToken = "YOUR_ACCESS_TOKEN"; // Replace with a valid token.
+  const entityName = "account"; // Change as needed.
+  processEntityAll(accessToken, entityName).catch(console.error);
 }

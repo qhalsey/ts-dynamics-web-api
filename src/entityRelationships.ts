@@ -3,6 +3,8 @@
 import axios, { AxiosResponse } from "axios";
 import * as ExcelJS from "exceljs";
 
+import { Relationship } from "./types";
+
 /**
  * Fetches all pages of data from a given URL, handling paging.
  *
@@ -72,7 +74,7 @@ export async function fetchEntityRelationships(
  * @param {any} rel - The raw relationship object to transform.
  * @returns {Record<string, any>} A transformed object with key-value pairs for the relationship.
  */
-export function transformRelationship(rel: any): Record<string, any> {
+export function transformRelationship(rel: any): Relationship {
   return {
     "Schema Name": rel.SchemaName || "",
     "Security Types": rel.SecurityTypes || "",

@@ -5,7 +5,12 @@
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": [],
+    "plugins": [],
+    "disableSizeLimit": true
   },
   "include": ["src"]
 }

@@ -1,16 +1,10 @@
 // src/entityBusinessRules.ts
 
 import axios, { AxiosResponse } from "axios";
+import { parseStringPromise } from "xml2js";
 import * as ExcelJS from "exceljs";
 
 import { BusinessRule } from "./types/crm"; // Assuming you have a types file for your interfaces
-
-/**
- * Changes to the Transform Function
- * We need to check if the description of the business rule is "Click to add description"
- * and if so, we need to set it to an empty string.
- *"Component State": formComponentStates[view["componentstate"]] || "",
- */
 
 /**
  * Fetches business rules (category=2) for a given entity from Microsoft Dynamics 365.
@@ -26,12 +20,9 @@ export async function fetchEntityBusinessRules(
   accessToken: string,
   baseUrl: string
 ): Promise<BusinessRule[]> {
-  const filter = `category eq 2 and primaryentity eq '${entityName}'`;
+  const filter = `primaryentity eq '${entityName}'`;
   const selectFields = [
     "name",
-    // "description",
-    // "primaryentity",
-    // "clientdata",
     "category",
     "type",
     "scope",
@@ -39,6 +30,7 @@ export async function fetchEntityBusinessRules(
     "iscustomizable/Value",
     "statecode",
     "statuscode",
+    // "xaml",
   ].join(",");
 
   const url = `${baseUrl}/workflows?$filter=${encodeURIComponent(
@@ -52,6 +44,16 @@ export async function fetchEntityBusinessRules(
     },
   });
 
+  if (response.status !== 200) {
+    throw new Error(`Failed to fetch business rules: ${response.statusText}`);
+  }
+
+  if (!response.data || !response.data.value) {
+    return [];
+  }
+
+  console.log(response.data.value[0].xaml);
+
   return (response.data.value || []).map((rule: any) => ({
     name: rule.name,
     // primaryentity: rule.primaryentity,
@@ -63,6 +65,7 @@ export async function fetchEntityBusinessRules(
     statuscode: rule.statuscode,
     type: rule.type,
     category: rule.category,
+    // xaml: rule.xaml,
   }));
 }
 
@@ -73,6 +76,12 @@ export async function fetchEntityBusinessRules(
  * @returns {Record<string, any>} A transformed object with key-value pairs for Excel export.
  */
 export function transformBusinessRule(rule: BusinessRule): Record<string, any> {
+  const businessRuleStatusCode: Record<number, string> = {
+    1: "Draft",
+    2: "Activated",
+    3: "CompanyDLPViolation",
+  };
+
   const businessRuleType: Record<number, string> = {
     0: "Business Flow",
     1: "Task Flow",
@@ -110,9 +119,10 @@ export function transformBusinessRule(rule: BusinessRule): Record<string, any> {
     "Is Managed": rule.ismanaged,
     "Is Customizable": rule.iscustomizable,
     "State Code": businessRuleComponentState[rule.statecode] || "",
-    "Status Code": rule.statuscode,
+    "Status Code": businessRuleStatusCode[rule.statuscode] || "",
     Category: businessRuleCategory[rule.category] || "",
     Type: businessRuleType[rule.type] || "",
+    // Logic: parseBusinessRuleXaml(rule.xaml) || "No XAML provided",
   };
 }
 

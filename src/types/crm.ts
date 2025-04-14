@@ -28,9 +28,10 @@ export interface BusinessRule {
 }
 
 export interface Relationship {
+  HasChanged: boolean;
   "Schema Name": string;
   "Security Types": string;
-  Managed: string;
+  Managed: boolean;
   Type: string;
   "Attribute Ref.": string;
   "Entity Ref.": string;
@@ -38,7 +39,8 @@ export interface Relationship {
   "Referencing Entity": string;
   Hierarchical: string;
   Behavior: string;
-  Customizable: string;
+  Customizable: boolean;
+  IsCustomRelationship: boolean;
   "Menu Behavior": string;
   "Menu Customization": string;
   Assign: string;

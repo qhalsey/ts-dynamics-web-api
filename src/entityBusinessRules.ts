@@ -52,8 +52,6 @@ export async function fetchEntityBusinessRules(
     return [];
   }
 
-  console.log(response.data.value[0].xaml);
-
   return (response.data.value || []).map((rule: any) => ({
     name: rule.name,
     // primaryentity: rule.primaryentity,

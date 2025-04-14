@@ -76,9 +76,10 @@ export async function fetchEntityRelationships(
  */
 export function transformRelationship(rel: any): Relationship {
   return {
+    HasChanged: rel.HasChanged,
     "Schema Name": rel.SchemaName || "",
     "Security Types": rel.SecurityTypes || "",
-    Managed: rel.IsManaged ?? "",
+    Managed: rel.IsManaged,
     Type: rel.RelationshipType || "",
     "Attribute Ref.": rel.ReferencedAttribute || "",
     "Entity Ref.": rel.ReferencedEntity || "",
@@ -89,6 +90,7 @@ export function transformRelationship(rel: any): Relationship {
     Behavior: rel.RelationshipBehavior ?? "",
     // IsCustomizable.Value -> "Customizable"
     Customizable: rel?.IsCustomizable?.Value ?? "",
+    IsCustomRelationship: rel.IsCustomRelationship,
     // AssociatedMenuConfiguration.Behavior -> "Menu Behavior"
     "Menu Behavior": rel?.AssociatedMenuConfiguration?.Behavior ?? "",
     // AssociatedMenuConfiguration.IsCustomizable -> "Menu Customization"

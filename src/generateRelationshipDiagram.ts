@@ -7,46 +7,79 @@ import { Relationship } from "./types";
 
 /**
  * Options for filtering which relationships to include in the diagram.
+ * (Using excludeDefault means "only include relationships if HasChanged != null OR IsCustomRelationship === true")
  */
 export interface DiagramFilterOptions {
-  allowedTypes?: string[];
-  allowedEntities?: string[];
+  /**
+   * When set to true, only include relationships that have been changed or are marked as custom.
+   */
+  excludeDefault?: boolean;
+}
+
+/**
+ * Determines whether to include a relationship in the diagram.
+ *
+ * A relationship is included only if:
+ * - It has been changed (HasChanged is not null) OR IsCustomRelationship is true.
+ * AND
+ * - Its "Schema Name", "Entity Ref.", and "Referencing Entity" do NOT start with "msdyn".
+ *
+ * @param rel A Relationship object.
+ * @returns true if the relationship should be included; false otherwise.
+ */
+function includeRelationship(rel: Relationship): boolean {
+  // Exclude if Schema Name starts with "msdyn"
+  if (
+    rel["Schema Name"] &&
+    rel["Schema Name"].toLowerCase().startsWith("msdyn")
+  ) {
+    return false;
+  }
+  // Exclude if Entity Ref. starts with "msdyn"
+  if (
+    rel["Entity Ref."] &&
+    rel["Entity Ref."].toLowerCase().startsWith("msdyn")
+  ) {
+    return false;
+  }
+  // Exclude if Referencing Entity starts with "msdyn"
+  if (
+    rel["Referencing Entity"] &&
+    rel["Referencing Entity"].toLowerCase().startsWith("msdyn")
+  ) {
+    return false;
+  }
+  // Include if the relationship has been changed (HasChanged is not null)
+  // OR if it is explicitly marked as a custom relationship.
+  return rel.HasChanged !== null || rel.IsCustomRelationship === true;
 }
 
 /**
  * Generates Graphviz DOT content based on an array of Relationship objects.
+ * Additionally logs the count of relationships before and after filtering.
  *
- * @param relationships - The relationships to render.
- * @param filterOptions - Optional filter criteria to limit the diagram output.
- * @returns A string containing the DOT language representation of the diagram.
+ * @param relationships The relationships to render.
+ * @param filterOptions Optional filter criteria.
+ * @returns The DOT language representation of the diagram.
  */
 function generateDot(
   relationships: Relationship[],
   filterOptions?: DiagramFilterOptions
 ): string {
-  if (filterOptions) {
-    relationships = relationships.filter((rel) => {
-      if (
-        filterOptions.allowedTypes &&
-        !filterOptions.allowedTypes.includes(rel.Type)
-      ) {
-        return false;
-      }
-      if (filterOptions.allowedEntities) {
-        const allowed = filterOptions.allowedEntities.map((entity) =>
-          entity.toLowerCase()
-        );
-        if (
-          !allowed.includes(rel["Entity Ref."].toLowerCase()) &&
-          !allowed.includes(rel["Referencing Entity"].toLowerCase())
-        ) {
-          return false;
-        }
-      }
-      return true;
-    });
+  // Log total relationships before filtering.
+  console.log(`Total relationships before filtering: ${relationships.length}`);
+
+  // Apply our filter: if excludeDefault is true, keep only relationships that
+  // either have been changed (HasChanged !== null) or are marked as custom,
+  // and filter out any whose Schema Name, Entity Ref., or Referencing Entity starts with "msdyn".
+  if (filterOptions && filterOptions.excludeDefault) {
+    relationships = relationships.filter(includeRelationship);
   }
 
+  // Log total relationships after filtering.
+  console.log(`Total relationships after filtering: ${relationships.length}`);
+
+  // Build the DOT graph content.
   let dot = "digraph Relationships {\n";
   dot += "  rankdir=LR;\n";
   dot +=
@@ -55,7 +88,19 @@ function generateDot(
   relationships.forEach((rel) => {
     const source = rel["Referencing Entity"] || "Unknown";
     const target = rel["Entity Ref."] || "Unknown";
-    const label = `${rel["Schema Name"]} (${rel.Type})`;
+
+    // Build a label that shows the Schema Name and Relationship Type.
+    // Append [Custom] if the relationship is marked as custom,
+    // and [Changed] if HasChanged is not null.
+    const labelParts = [rel["Schema Name"], `(${rel.Type})`];
+    if (rel.IsCustomRelationship === true) {
+      labelParts.push("[Custom]");
+    }
+    if (rel.HasChanged !== null) {
+      labelParts.push("[Changed]");
+    }
+    const label = labelParts.join(" ");
+
     dot += `  "${source}" -> "${target}" [label="${label}"];\n`;
   });
 
@@ -64,11 +109,11 @@ function generateDot(
 }
 
 /**
- * Generates a relationship diagram as an image file.
+ * Generates a relationship diagram as a PNG image.
  *
- * @param relationships - An array of Relationship objects.
- * @param outputFileName - The name of the output file (e.g., "account.png").
- * @param filterOptions - Optional filters to limit relationships shown.
+ * @param relationships An array of Relationship objects.
+ * @param outputFileName The output file name (e.g., "account.png").
+ * @param filterOptions Optional filtering options.
  * @returns A Promise that resolves when the diagram image is successfully saved.
  */
 export function generateRelationshipDiagram(
